@@ -1,2 +1,2 @@
-from progress import *
-from utils import *
+from .progress import *
+from .utils import *
