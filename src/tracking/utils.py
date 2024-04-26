@@ -47,9 +47,8 @@ def save(path, data):
 
 
 def fill_args(string, **kwargs):
-    pattern = r"\{([^}]*)\}"
+    pattern = "\{(?:" + "|".join(kwargs.keys()) + ")\}"
     matches = re.findall(pattern, string)
     for key in matches:
-        if key in kwargs:
-            string = string.replace("{" + key + "}", kwargs[key])
+        string = string.replace(key, str(kwargs[key[1:-1]]))
     return string
