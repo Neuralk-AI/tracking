@@ -1,6 +1,7 @@
-import os, re
 import json
+import csv
 import yaml
+import os, re
 import numpy as np
 import pandas as pd
 
@@ -50,5 +51,47 @@ def fill_args(string, **kwargs):
     pattern = "\{(?:" + "|".join(kwargs.keys()) + ")\}"
     matches = re.findall(pattern, string)
     for key in matches:
-        string = string.replace(key, str(kwargs[key[1:-1]]))
+        if str(kwargs[key[1:-1]]) != "None":
+            string = string.replace(key, str(kwargs[key[1:-1]]))
     return string
+
+
+def add_row_to_csv(file_path, row_data):
+    with open(file_path, "a", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(row_data)
+
+
+def save_list_to_file(lst, file_path):
+    # Extract directory from the file path
+    directory = os.path.dirname(file_path)
+
+    # Create the directory if it doesn't exist
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Write list content to the file
+    with open(file_path, "w") as file:
+        for item in lst:
+            file.write(str(item) + "\n")
+
+
+def read_list_from_file(file_path):
+    # Initialize an empty list to store the content
+    content_list = []
+
+    # Read the file and append each line to the list
+    with open(file_path, "r") as file:
+        for line in file:
+            content_list.append(line.strip())
+
+    return content_list
+
+
+def add_line_to_file(file_path, line):
+    with open(file_path, "a") as file:
+        if type(line) == str:
+            file.write(line + "\n")
+        elif type(line) == list:
+            for l in line:
+                file.write(l + "\n")
