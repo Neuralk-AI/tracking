@@ -1,7 +1,10 @@
 import json
 import csv
 import yaml
+import uuid
+import time
 import os, re
+import inspect
 import numpy as np
 import pandas as pd
 
@@ -18,6 +21,7 @@ def load(path):
     elif file_extension.lower() == ".txt":
         with open(path, "r") as text_file:
             data = text_file.readlines()
+            data = [item.strip("\n") for item in data]
     elif file_extension.lower() == ".csv":
         with open(path, "r") as csv_file:
             data = pd.read_csv(csv_file)
@@ -95,3 +99,68 @@ def add_line_to_file(file_path, line):
         elif type(line) == list:
             for l in line:
                 file.write(l + "\n")
+        else:
+            file.write(str(line) + "\n")
+
+
+def filter_args(func, d):
+    """Filter dictionary keys to match the function arguments.
+    Arguments:
+        - func: function
+        - d: dict
+    Returns:
+        - args: dict
+    """
+    keys = inspect.getfullargspec(func).args
+    args = {key: d[key] for key in keys if (key != "self" and key in d.keys())}
+    return args
+
+
+def check_folder(path):
+    """Create adequate folders if necessary.
+    Args:
+        - path: str
+    """
+    try:
+        if not os.path.isdir(path):
+            check_folder(os.path.dirname(path))
+            os.mkdir(path)
+    except:
+        pass
+
+
+def set_reproducible(seed: int):
+    """Set all seeds for reproducible experiments."""
+    import os
+    import random
+    import numpy as np
+    import torch
+
+    # Set PYTHONHASHSEED environment variable
+    os.environ["PYTHONHASHSEED"] = "42"
+
+    # Set seeds for reproducibility
+    random.seed(42)
+    np.random.seed(42)
+    torch.manual_seed(42)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(42)
+        torch.cuda.manual_seed_all(42)  # if you are using multi-GPU
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    try:
+        import tensorflow as tf
+
+        tf.random.set_seed(42)
+    except:
+        print("Couldn't import tensorflow. Ignored.")
+
+
+def create_uuid(self, anything: str = "", include_time=True) -> str:
+    """Create a unique uuid from timestamp and optional input string."""
+    if include_time:
+        return str(
+            uuid.uuid5(uuid.NAMESPACE_DNS, str(time.time()) + "-" + str(anything))
+        )
+    else:
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, str(anything)))

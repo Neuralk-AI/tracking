@@ -1,6 +1,7 @@
 rich
 pandas
 numpy
+inspect
 pytest==7.4.2
 black==23.9.1
 pydantic==2.3.0
@@ -8,4 +9,6 @@ pydantic-extra-types==2.1.0
 pydantic-settings==2.0.3
 pydantic_core==2.6.3
 typing
+streamlit
+watchdog
 -e .
