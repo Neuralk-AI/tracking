@@ -156,7 +156,7 @@ def set_reproducible(seed: int):
         print("Couldn't import tensorflow. Ignored.")
 
 
-def create_uuid(self, anything: str = "", include_time=True) -> str:
+def create_uuid(anything: str = "", include_time=True) -> str:
     """Create a unique uuid from timestamp and optional input string."""
     if include_time:
         return str(
